@@ -109,11 +109,11 @@ def digisum_io():
 
 
 if __name__ == "__main__":
-    digisum_io()
-    exit(0)
+    # digisum_io()
+    # exit(0)
     start_server(
         digisum_io,
-        port=0,
+        port=80,
         host="",
         remote_access=True,
         # cdn="https://cdn1.tianli0.top/gh/wang0618/PyWebIO-assets@v{version}/",
