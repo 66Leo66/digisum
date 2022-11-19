@@ -39,7 +39,7 @@ def expected_answer(n: int) -> int:
 
 def solve_min(n: int) -> dict:
     steps = []
-    nums = list(range(1, n + 1))
+    nums = list(range(0, n + 1))
     for i in range(n - 1, 1, -1):
         steps.append(Step(nums[i + 1], nums[i]))
         nums[i] = steps[-1].dsum
@@ -57,7 +57,7 @@ def sequential_merge(nums: list, l: int, r: int) -> list:
 
 def solve_max(n: int, exp_ans: int) -> dict:
     steps = []
-    nums = list(range(1, n + 1))
+    nums = list(range(0, n + 1))
 
     k = len(str(n)) - 1
 
@@ -68,13 +68,16 @@ def solve_max(n: int, exp_ans: int) -> dict:
             avg += 1
         if avg >= 9:
             avg = 8
-        mid = int(str(avg) * (k - 1))
-        if mid * 10 + exp_ans - (k - 1) * avg >= 9:
+        mid = int(str(avg) * (k - 1)) * 10
+        if exp_ans - (k - 1) * avg >= 9:
             mid += 8
         else:
-            mid = mid * 10 + exp_ans - (k - 1) * avg
+            mid += exp_ans - (k - 1) * avg
     else:
         mid = exp_ans
+
+    steps.extend(sequential_merge(nums, 1, mid - 1))
+    steps.extend(sequential_merge(nums, mid + 1, n))
 
     if 1 < mid and mid < n:
         steps.append(Step(nums[mid - 1], nums[n]))
