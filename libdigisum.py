@@ -17,7 +17,8 @@ class Step:
 def expected_answer(n: int) -> int:
     if n < 10:
         return n
-    k = sum(range(1, n + 1))
+    # k = sum(range(1, n + 1))
+    k = (n + 1) * n / 2
     while k >= 10:
         k = digisum(k)
     numlen = len(str(n)) - 1
@@ -54,12 +55,32 @@ def sequential_merge(nums: list, l: int, r: int) -> list:
     return steps
 
 
-def solve_max(n: int) -> dict:
+def solve_max(n: int, exp_ans: int) -> dict:
     steps = []
+    nums = list(range(1, n + 1))
 
-    e = n
-    k = 0
-    while e > 0:
-        k += 1
-        e //= 10
-    k -= 1
+    k = len(str(n)) - 1
+
+    mid = 0
+    if k != 0:
+        avg = exp_ans // k
+        if exp_ans % k != 0:
+            avg += 1
+        if avg >= 9:
+            avg = 8
+        mid = int(str(avg) * (k - 1))
+        if mid * 10 + exp_ans - (k - 1) * avg >= 9:
+            mid += 8
+        else:
+            mid = mid * 10 + exp_ans - (k - 1) * avg
+    else:
+        mid = exp_ans
+
+    if 1 < mid and mid < n:
+        steps.append(Step(nums[mid - 1], nums[n]))
+        steps.append(Step(steps[-1].dsum, mid))
+    else:
+        op = nums[n] if mid == 1 else nums[n - 1]
+        steps.append(Step(op, mid))
+
+    return {"answer": steps[-1].dsum, "steps": steps}
