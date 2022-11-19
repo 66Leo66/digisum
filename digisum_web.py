@@ -113,6 +113,7 @@ if __name__ == "__main__":
     start_server(
         digisum_io,
         port=0,
-        host=None,
+        host="",
         remote_access=True,
+        # cdn="https://cdn1.tianli0.top/gh/wang0618/PyWebIO-assets@v{version}/",
     )
