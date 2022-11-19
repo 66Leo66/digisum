@@ -18,8 +18,8 @@ MAX_NUMBER = 1e9 + 5
 
 
 def validate_n(n):
-    if n < 1:
-        return "需要一个正整数"
+    if n <= 1:
+        return "需要一个超过1的正整数"
     elif n >= MAX_NUMBER:
         return "数字太大了，请在本地部署并计算"
     return None
@@ -109,7 +109,8 @@ def digisum_io():
 
 
 if __name__ == "__main__":
-    # digisum_io()
+    digisum_io()
+    exit(0)
     start_server(
         digisum_io,
         port=0,
