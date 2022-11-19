@@ -3,12 +3,12 @@ def digisum(n:int=0) -> int:
 	
 
 class Step:
-	def __init__(add1: int, add2: int):
+	def __init__(self, add1: int, add2: int):
 		self.add1 = add1
 		self.add2 = add2
 		self.dsum = digisum(add1 + add2)
-	def to_string() -> str:
-		return "取 {} + {} = {}, 加入 {}".format(add1, add2, add1+add2, dsum)
+	def to_string(self) -> str:
+		return "取 {} + {} = {}, 加入 {}".format(self.add1, self.add2, self.add1+self.add2, self.dsum)
 
 def expected_answer(n: int) -> int:
 	if(n<10):
@@ -35,5 +35,3 @@ def getmin(n: int) -> int:
 	nums = range(1, n+1)
 	for i in range(n, 1, -1):
 		
-		
-	
