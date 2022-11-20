@@ -13,6 +13,7 @@ from pywebio.output import (
     put_success,
     put_info,
     put_error,
+    put_warning,
     toast,
     clear_scope,
 )
@@ -192,6 +193,10 @@ def digisum_io():
                     )
                 else:
                     put_error("❌ 求得的答案 {} 与预期答案 {} 不符！".format(res["answer"], exp_ans))
+                    put_warning(
+                        "你也可以帮忙解决这个错误！\n在 https://git.6leo6.com/66Leo66/digisum 查看程序代码并修改\n或直接联系高一(2)班吴书玮同学！"
+                    )
+
                 result_btn = [{"label": "将步骤保存为文本文件", "value": "save"}]
                 # put_button(label="将步骤保存为文本文件", onclick=lambda: get_file(res))
 
