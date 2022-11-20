@@ -4,15 +4,17 @@ from pywebio.output import (
     use_scope,
     put_processbar,
     set_processbar,
-    put_button,
+    put_buttons,
     put_file,
     put_text,
     put_loading,
+    put_scrollable,
 )
 from pywebio.platform.tornado import start_server
 from pywebio_battery import put_logbox, logbox_append, confirm
 from libdigisum import Step, solve_max, solve_min, expected_answer, digisum
 import random
+from functools import partial
 
 MAX_NUMBER = 1e9 + 5
 
@@ -46,13 +48,37 @@ def get_file(res: dict):
         put_file(name=f"result-{rand}.txt", content=ctnt, scope="result")
 
 
+def print_steps(res: dict):
+    with put_loading():
+        msg = ""
+        for st in res["steps"]:
+            msg += st.to_string()
+            msg += "\n"
+        put_scrollable(
+            content=msg,
+            height=400,
+        )
+
+
+def result_btn_handler(res: dict, btn: str):
+    if btn == "save":
+        get_file(res)
+    elif btn == "display":
+        print_steps(res)
+
+
 def digisum_io():
     put_markdown("# 数位和求解程序")
     user_input = input_group(
         "运行参数",
         [
             input(
-                label="输入参数 n", name="num", type=NUMBER, validate=validate_n, value=2018
+                label="输入参数 n",
+                name="num",
+                type=NUMBER,
+                validate=validate_n,
+                value=2018,
+                help_text="初始数列将为 [1, n] 中所有整数",
             ),
             select(
                 label="选择求解类型",
@@ -102,7 +128,13 @@ def digisum_io():
                 else:
                     res = solve_min(int(user_input["num"]), callback)
                 put_markdown(f"### 解得答案为: {res['answer']}")
-                put_button(label="将步骤保存为文本文件", onclick=lambda: get_file(res))
+                result_btn = [{"label": "将步骤保存为文本文件", "value": "save"}]
+                # put_button(label="将步骤保存为文本文件", onclick=lambda: get_file(res))
+
+                if not "live_output" in user_input["extras"]:
+                    # put_button(label="显示步骤", onclick=lambda: print_steps(res))
+                    result_btn.append({"label": "显示求解步骤", "value": "display"})
+                put_buttons(result_btn, partial(result_btn_handler, res))
             else:
                 put_text(display_msg)
                 put_markdown("### 感谢使用")
