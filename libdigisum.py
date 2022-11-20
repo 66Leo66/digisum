@@ -96,18 +96,17 @@ def solve_max(n: int, callback) -> dict:
 
     # steps.extend(sequential_merge(n, nums, 1, mid - 1, callback))
     # steps.extend(sequential_merge(n, nums, mid + 1, n, callback))
-    reverse_merge(n, steps, nums, 1, mid - 1, callback)
     reverse_merge(n, steps, nums, mid + 1, n, callback)
+    reverse_merge(n, steps, nums, 1, mid - 1, callback)
 
     if 1 < mid and mid < n:
-        steps.append(Step(nums[1], nums[mid + 1]))
+        steps.append(Step(nums[mid + 1], nums[1]))
         callback((len(steps), (n - 1)), steps[-1])
 
         steps.append(Step(steps[-1].dsum, mid))
         callback((len(steps), (n - 1)), steps[-1])
     else:
         op = nums[2] if mid == 1 else nums[1]
-
         steps.append(Step(op, mid))
         callback((len(steps), (n - 1)), steps[-1])
 

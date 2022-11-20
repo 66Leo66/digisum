@@ -39,7 +39,7 @@ def logbox_callback(prog: tuple, step: Step):
 
 
 def progress_callback(prog: tuple, step: Step):
-    if prog[0] % (prog[1] // 100) == 0:
+    if prog[0] % (prog[1] // 100) == 0 or prog[0] == prog[1]:
         set_processbar("progress", prog[0] / prog[1])
 
 
@@ -206,8 +206,8 @@ def digisum_io():
 
 
 if __name__ == "__main__":
-    # digisum_io()
-    # exit(0)
+    digisum_io()
+    exit(0)
     start_server(
         digisum_io,
         port=80,
