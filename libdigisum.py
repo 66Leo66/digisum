@@ -42,12 +42,12 @@ def solve_min(n: int, callback) -> dict:
     nums = list(range(0, n + 1))
     for i in range(n - 1, 1, -1):
         steps.append(Step(nums[i + 1], nums[i]))
-        callback(len(steps) / (n - 1), steps[-1])
+        callback((len(steps), (n - 1)), steps[-1])
 
         nums[i] = steps[-1].dsum
 
     steps.append(Step(nums[2], nums[1]))
-    callback(len(steps) / (n - 1), steps[-1])
+    callback((len(steps), (n - 1)), steps[-1])
     return {"answer": steps[-1].dsum, "steps": steps}
 
 
@@ -55,7 +55,16 @@ def sequential_merge(n: int, steps: list, nums: list, l: int, r: int, callback):
     # steps = []
     for i in range(l + 1, r + 1):
         steps.append(Step(nums[i - 1], nums[i]))
-        callback(len(steps) / (n - 1), steps[-1])
+        callback((len(steps), (n - 1)), steps[-1])
+        nums[i] = steps[-1].dsum
+    # return steps
+
+
+def reverse_merge(n: int, steps: list, nums: list, l: int, r: int, callback):
+    # steps = []
+    for i in range(r - 1, l - 1, -1):
+        steps.append(Step(nums[i + 1], nums[i]))
+        callback((len(steps), (n - 1)), steps[-1])
         nums[i] = steps[-1].dsum
     # return steps
 
@@ -77,6 +86,7 @@ def solve_max(n: int, callback) -> dict:
         if avg >= 9:
             avg = 8
         mid = int(str(avg) * (k - 1)) * 10
+
         if exp_ans - (k - 1) * avg >= 9:
             mid += 8
         else:
@@ -86,19 +96,19 @@ def solve_max(n: int, callback) -> dict:
 
     # steps.extend(sequential_merge(n, nums, 1, mid - 1, callback))
     # steps.extend(sequential_merge(n, nums, mid + 1, n, callback))
-    sequential_merge(n, steps, nums, 1, mid - 1, callback)
-    sequential_merge(n, steps, nums, mid + 1, n, callback)
+    reverse_merge(n, steps, nums, 1, mid - 1, callback)
+    reverse_merge(n, steps, nums, mid + 1, n, callback)
 
     if 1 < mid and mid < n:
-        steps.append(Step(nums[mid - 1], nums[n]))
-        callback(len(steps) / (n - 1), steps[-1])
+        steps.append(Step(nums[1], nums[mid + 1]))
+        callback((len(steps), (n - 1)), steps[-1])
 
         steps.append(Step(steps[-1].dsum, mid))
-        callback(len(steps) / (n - 1), steps[-1])
+        callback((len(steps), (n - 1)), steps[-1])
     else:
-        op = nums[n] if mid == 1 else nums[n - 1]
+        op = nums[2] if mid == 1 else nums[1]
 
         steps.append(Step(op, mid))
-        callback(len(steps) / (n - 1), steps[-1])
+        callback((len(steps), (n - 1)), steps[-1])
 
-    return {"answer": steps[-1].dsum, "steps": steps}
+    return {"answer": steps[-1].dsum, "steps": steps, "mid": mid}

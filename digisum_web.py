@@ -10,6 +10,10 @@ from pywebio.output import (
     put_loading,
     put_scrollable,
     popup,
+    put_success,
+    put_info,
+    put_error,
+    toast,
     clear_scope,
 )
 from pywebio.platform.tornado import start_server
@@ -30,12 +34,13 @@ def validate_n(n):
     return None
 
 
-def logbox_callback(prog: float, step: Step):
+def logbox_callback(prog: tuple, step: Step):
     logbox_append("out", step.to_string() + "\n")
 
 
-def progress_callback(prog: float, step: Step):
-    set_processbar("progress", prog)
+def progress_callback(prog: tuple, step: Step):
+    if prog[0] % (prog[1] // 100) == 0:
+        set_processbar("progress", prog[0] / prog[1])
 
 
 def get_file(res: dict):
@@ -126,11 +131,17 @@ def digisum_io():
             checkbox(
                 label="额外参数",
                 name="extras",
-                options=[{"label": "实时显示结果", "value": "live_output"}],
+                options=[
+                    {"label": "实时显示结果", "value": "live_output"},
+                    {"label": "启用 Debug", "value": "debug"},
+                ],
             ),
         ],
     )
     display_msg: str
+    exp_max: int
+    exp_min: int
+    exp_ans: int
     with use_scope("precalc"):
         inp = user_input["num"]
         exp_max = expected_answer(int(inp))
@@ -159,10 +170,28 @@ def digisum_io():
 
                 res: dict
                 if user_input["type"] == "max":
+                    exp_ans = exp_max
                     res = solve_max(int(user_input["num"]), callback)
+                    if "debug" in user_input["extras"]:
+                        put_info(f"mid = {res['mid']}")
+                        need_logs = 5
+                        msg = ""
+                        for i in range(need_logs, 0, -1):
+                            st = res["steps"][-i].to_string()
+                            msg += f"last {i} step: {st}\n"
+                        put_info(msg)
                 else:
+                    exp_ans = exp_min
                     res = solve_min(int(user_input["num"]), callback)
-                put_markdown(f"### 解得答案为: {res['answer']}")
+
+                put_markdown("---")
+                put_info(f"求解 {user_input['num']}, 解得答案为: {res['answer']}")
+                if res["answer"] == exp_ans:
+                    put_success(
+                        "✅ 求得的答案 {} 与预期答案 {} 相符！".format(res["answer"], exp_ans)
+                    )
+                else:
+                    put_error("❌ 求得的答案 {} 与预期答案 {} 不符！".format(res["answer"], exp_ans))
                 result_btn = [{"label": "将步骤保存为文本文件", "value": "save"}]
                 # put_button(label="将步骤保存为文本文件", onclick=lambda: get_file(res))
 
@@ -177,8 +206,8 @@ def digisum_io():
 
 
 if __name__ == "__main__":
-    # digisum_io()
-    # exit(0)
+    digisum_io()
+    exit(0)
     start_server(
         digisum_io,
         port=80,
