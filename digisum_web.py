@@ -9,8 +9,11 @@ from pywebio.output import (
     put_text,
     put_loading,
     put_scrollable,
+    popup,
+    clear_scope,
 )
 from pywebio.platform.tornado import start_server
+from pywebio.platform import config
 from pywebio_battery import put_logbox, logbox_append, confirm
 from libdigisum import Step, solve_max, solve_min, expected_answer, digisum
 import random
@@ -36,28 +39,57 @@ def progress_callback(prog: float, step: Step):
 
 
 def get_file(res: dict):
-    with put_loading():
-        alphabet = [chr(i) for i in range(ord("a"), ord("z") + 1)]
-        random.shuffle(alphabet)
-        rand = "".join(random.sample(alphabet, 6))
-        msg = ""
-        for st in res["steps"]:
-            msg += st.to_string()
-            msg += "\n"
-        ctnt = msg.encode("utf-8")
-        put_file(name=f"result-{rand}.txt", content=ctnt, scope="result")
+    with use_scope("print_file_scope"):
+        clear_scope()
+        with put_loading():
+            alphabet = [chr(i) for i in range(ord("a"), ord("z") + 1)]
+            random.shuffle(alphabet)
+            rand = "".join(random.sample(alphabet, 6))
+            msg = ""
+            for st in res["steps"]:
+                msg += st.to_string()
+                msg += "\n"
+            ctnt = msg.encode("utf-8")
+            put_file(name=f"result-{rand}.txt", content=ctnt, scope="result")
 
 
 def print_steps(res: dict):
-    with put_loading():
-        msg = ""
-        for st in res["steps"]:
-            msg += st.to_string()
-            msg += "\n"
-        put_scrollable(
-            content=msg,
-            height=400,
-        )
+    with use_scope("print_result_scope"):
+        clear_scope()
+        with put_loading():
+            msg = ""
+            for st in res["steps"]:
+                msg += st.to_string()
+                msg += "\n"
+            put_scrollable(
+                content=msg,
+                height=400,
+            )
+
+
+def display_about():
+    about_text = """
+“数位和合并” 问题
+Python 在线求解界面
+由 PyWebIO 驱动
+
+问题分析/解法提出：
+    深圳实验学校高中部 高一(4)班 黎远睿
+    深圳实验学校高中部 高一(2)班 吴书玮
+
+C++ 求解程序：
+    主要由 深圳实验学校高中部 高一(2)班 吴书玮 完成
+
+Python 程序移植：
+    由 深圳实验学校高中部 高一(4)班 黎远睿 完成
+
+C++ 和 Python 程序开源于 https://git.6leo6.com/66Leo66/digisum
+""".strip()
+
+    popup(
+        title="关于此程序",
+        content=about_text,
+    )
 
 
 def result_btn_handler(res: dict, btn: str):
@@ -65,8 +97,11 @@ def result_btn_handler(res: dict, btn: str):
         get_file(res)
     elif btn == "display":
         print_steps(res)
+    elif btn == "about":
+        display_about()
 
 
+@config(theme="sketchy")
 def digisum_io():
     put_markdown("# 数位和求解程序")
     user_input = input_group(
@@ -134,6 +169,7 @@ def digisum_io():
                 if not "live_output" in user_input["extras"]:
                     # put_button(label="显示步骤", onclick=lambda: print_steps(res))
                     result_btn.append({"label": "显示求解步骤", "value": "display"})
+                result_btn.append({"label": "关于", "value": "about"})
                 put_buttons(result_btn, partial(result_btn_handler, res))
             else:
                 put_text(display_msg)
