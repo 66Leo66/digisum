@@ -206,8 +206,8 @@ def digisum_io():
 
 
 if __name__ == "__main__":
-    digisum_io()
-    exit(0)
+    # digisum_io()
+    # exit(0)
     start_server(
         digisum_io,
         port=80,
