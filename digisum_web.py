@@ -50,7 +50,7 @@ def get_file(res: dict):
                 msg += st.to_string()
                 msg += "\n"
             ctnt = msg.encode("utf-8")
-            put_file(name=f"result-{rand}.txt", content=ctnt, scope="result")
+            put_file(name=f"result-{rand}.txt", content=ctnt)
 
 
 def print_steps(res: dict):
