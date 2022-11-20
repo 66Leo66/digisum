@@ -50,23 +50,16 @@ inline int anssum(int n, int k) {
         aaaswh--;
     }
 
-    //	if(n == 2018 && k == 3)
-    //	{
-    //		return 21;
-    //	}
     return 1;
 }
 
-inline void out(int l, int r) {
-    int e;
-    for (int i = l + 1; i <= r; i++) {
-        e = swh(uu[i - 1] + uu[i]);
-        printf("%lld + %lld -> %lld\n", uu[i - 1], uu[i], e);
-        uu[i] = e;
-    }
-}
+inline void solve2();
+inline void out2(int l, int r);
+
+int llans;
 
 inline void solve(int n, int sss) {
+    if (n <= 3) return solve2();
     int e = n;
     int k = 0;
     int o;
@@ -88,24 +81,27 @@ inline void solve(int n, int sss) {
             mid += sss - (k - 1) * o;
     } else
         mid = sss;
+
     printf("%lld\n", mid);
-    out(1, mid - 1);
-    out(mid + 1, n);
+    out2(mid + 1, n);
+    out2(1, mid - 1);
+    //	int e;
     int aans;
     if (mid > 1 && mid < n) {
-        printf("%lld + %lld -> %lld\n", uu[mid - 1], uu[n], e = swh(uu[mid - 1] + uu[n]));
+        printf("%lld + %lld -> %lld\n", uu[mid + 1], uu[1], e = swh(uu[mid + 1] + uu[1]));
         printf("%lld + %lld -> %lld\n", e, mid, aans = swh(e + mid));
     } else {
         if (mid == 1)
-            e = uu[n];
+            e = uu[2];
         else if (mid == n)
-            e = uu[n - 1];
+            e = uu[1];
         printf("%lld + %lld -> %lld\n", e, mid, aans = swh(e + mid));
     }
     if (aans != sss) {
         printf("NO,ans should be : %lld\n\n", sss);
     } else
         printf("YES,ans : %lld\n\n", sss);
+    llans = sss;
 }
 
 inline void out2(int l, int r) {
@@ -127,11 +123,18 @@ inline void solve2() {
         printf("NO,ans should be : %lld\n\n", aswh);
     } else
         printf("YES,ans : %lld\n\n", aswh);
+
+    if (n <= 3) return;
+    if (llans != ans) {
+        printf("NO,ans should be : %lld\n\n", ans);
+    } else
+        printf("YES,ans : %lld\n\n", ans);
 }
 
 #undef int
 int main() {
 #define int long long
+
     scanf("%lld", &n);
     if (n == 1) {
         printf("1");
