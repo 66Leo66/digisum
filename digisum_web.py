@@ -101,7 +101,7 @@ def result_btn_handler(res: dict, btn: str):
         display_about()
 
 
-@config(theme="sketchy")
+@config(theme="minty")
 def digisum_io():
     put_markdown("# 数位和求解程序")
     user_input = input_group(
