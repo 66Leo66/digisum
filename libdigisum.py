@@ -48,7 +48,7 @@ def solve_min(n: int, callback) -> dict:
 
     steps.append(Step(nums[2], nums[1]))
     callback((len(steps), (n - 1)), steps[-1])
-    return {"answer": steps[-1].dsum, "steps": steps}
+    return {"answer": steps[-1].dsum, "steps": steps, "mid": -1}
 
 
 def sequential_merge(n: int, steps: list, nums: list, l: int, r: int, callback):
