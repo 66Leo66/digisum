@@ -23,6 +23,7 @@ from pywebio_battery import put_logbox, logbox_append, confirm
 from libdigisum import Step, solve_max, solve_min, expected_answer, digisum
 import random
 from functools import partial
+import sys
 
 MAX_NUMBER = 1e9 + 5
 
@@ -40,7 +41,7 @@ def logbox_callback(prog: tuple, step: Step):
 
 
 def progress_callback(prog: tuple, step: Step):
-    if prog[0] % (prog[1] // 100) == 0 or prog[0] == prog[1]:
+    if prog[1] // 100 == 0 or prog[0] % (prog[1] // 100) == 0 or prog[0] == prog[1]:
         set_processbar("progress", prog[0] / prog[1])
 
 
@@ -211,12 +212,15 @@ def digisum_io():
 
 
 if __name__ == "__main__":
-    digisum_io()
-    exit(0)
-    start_server(
-        digisum_io,
-        port=80,
-        host="",
-        remote_access=False,
-        # cdn="https://cdn1.tianli0.top/gh/wang0618/PyWebIO-assets@v{version}/",
-    )
+    if "--server-mode" in sys.argv[1:]:
+        start_server(
+            digisum_io,
+            port=80,
+            host="",
+            remote_access=False,
+            # cdn="https://cdn1.tianli0.top/gh/wang0618/PyWebIO-assets@v{version}/",
+        )
+    else:
+        digisum_io()
+    
+    
